@@ -19,6 +19,7 @@ const state = {
     },
     actions:{
         button: document.getElementById("next-duel"),
+        soundBackground: document.getElementById("sound-bg"),
     }
 };
 
@@ -55,8 +56,13 @@ const cardData = [
 ];
 
 function init() {
+    state.fieldCards.player.style.display = "none";
+    state.fieldCards.enemy.style.display = "none";
+
     drawCard(5, playerSides.player1);
     drawCard(5, playerSides.enemy);
+
+    state.actions.soundBackground.play();
 };
 
 init();
@@ -92,8 +98,6 @@ async function createCardImage(idCard, fieldSide) {
         });
     };
 
-    
-
     return cardImage;
 };
 
@@ -118,7 +122,7 @@ async function setCardsField(cardId) {
     let duelResult = await checkDuelResults(cardId, enemyCardId);
 
     await updateScore();
-    await drawButton();
+    await drawButton(duelResult);
 }
 
 async function removeAllCardsImages() {
@@ -134,6 +138,46 @@ async function removeAllCardsImages() {
 }
 
 async function checkDuelResults(playerCardId, enemyCardId) {
-    let duelResults = "Empate";
+    let duelResults = "draw";
     let playerCard = cardData[playerCardId];
+
+    if(playerCard.WinOf.includes(enemyCardId)){
+        duelResults="win";
+        state.score.playerScore++;
+    };
+
+    if(playerCard.LoseOf.includes(enemyCardId)){
+        duelResults = "lose";
+        state.score.enemyScore++;
+    };
+
+    await playAudio(duelResults);
+
+    return duelResults;
+}
+
+async function drawButton(text) {
+    state.actions.button.innerText = text.toUpperCase();
+    state.actions.button.style.display = "block";
+}
+
+async function updateScore() {
+    state.score.scoreBox.innerText = `Win: ${state.score.playerScore} | Lose: ${state.score.enemyScore}`;
+}
+
+async function resetDuel() {
+    state.cardSprites.avatar.src = `${pathImages}card-back.png`;
+    state.cardSprites.name.innerText = "selecione uma carta";
+    state.cardSprites.type.innerText = "";
+    state.actions.button.style.display = "none";
+    state.fieldCards.player.style.display="none";
+    state.fieldCards.enemy.style.display="none";
+
+    init();
+}
+async function playAudio(status) {
+    if(status !== 'draw'){
+        const audio = new Audio(`./src/assets/audios/${status}.wav`);
+        audio.play();
+    }
 }

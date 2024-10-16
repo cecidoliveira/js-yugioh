@@ -1,3 +1,11 @@
+body{
+    cursor: url("../assets/cursor/yugicursor.png"),default;
+}
+
+button,a,button:hover,a:hover{
+    cursor: url("../assets/cursor/yamiyugicursorGLOW.png"), auto;
+}
+
 .bg-video{
     position: absolute;
     z-index: -2;
@@ -87,6 +95,7 @@
 
 #next-duel{
     display: none;
+    margin-top: 0.5rem;
 }
 
 .card-box{
@@ -99,8 +108,9 @@
 }
 
 .card-infield{
-    height: 11.2rem;
+    height: 11.4rem;
     width: 8rem;
+    border: 0.1rem solid #ffffff;
     border-radius: 0.8rem;
 }
 
